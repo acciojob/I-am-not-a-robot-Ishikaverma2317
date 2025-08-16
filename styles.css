@@ -1,40 +1,53 @@
-.img1 {
-  content: url("https://picsum.photos/id/237/200/300");
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const images = [
+    "https://picsum.photos/id/237/200/200", // dog
+    "https://picsum.photos/200/200?random=1",
+    "https://picsum.photos/200/200?random=2",
+    "https://picsum.photos/200/200?random=3",
+    "https://picsum.photos/200/200?random=4",
+    "https://picsum.photos/200/200?random=5"
+  ];
 
-.img2 {
-  content: url("https://picsum.photos/seed/picsum/200/300");
-}
+  const container = document.getElementById("image-container");
+  const message = document.getElementById("message");
 
-.img3 {
-  content: url("https://picsum.photos/200/300?grayscale");
-}
-.img4 {
-  content: url("https://picsum.photos/200/300/");
-}
-.img5 {
-  content: url("https://picsum.photos/200/300.jpg");
-}
+  // pick 4 random + 1 duplicate
+  let selected = [];
+  while (selected.length < 4) {
+    let img = images[Math.floor(Math.random() * images.length)];
+    if (!selected.includes(img)) {
+      selected.push(img);
+    }
+  }
 
-img {
-  margin: 10px;
-  border: 5px solid #555;
-  width: 10%;
-}
+  // add duplicate
+  const duplicate = selected[Math.floor(Math.random() * selected.length)];
+  selected.push(duplicate);
 
-.flex {
-  display: flex;
-  justify-content: center;
-}
+  // shuffle
+  selected.sort(() => Math.random() - 0.5);
 
-.selected {
-  border: 5px solid rgb(0, 195, 255);
-}
+  // render images
+  selected.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    img.style.width = "100px";
+    img.style.margin = "5px";
+    img.addEventListener("click", () => {
+      img.classList.toggle("selected");
+    });
+    container.appendChild(img);
+  });
 
-p {
-  text-align: center;
-}
-
-button {
-  margin: 20px;
-}
+  // verify button
+  document.getElementById("verify-btn").addEventListener("click", () => {
+    const selectedImgs = document.querySelectorAll(".selected");
+    if (selectedImgs.length === 2 && selectedImgs[0].src === selectedImgs[1].src) {
+      message.textContent = "You are a human!";
+      message.style.color = "green";
+    } else {
+      message.textContent = "Verification failed. Try again!";
+      message.style.color = "red";
+    }
+  });
+});
