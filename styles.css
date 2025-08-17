@@ -1,53 +1,55 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const images = [
-    "https://picsum.photos/id/237/200/200", // dog
-    "https://picsum.photos/200/200?random=1",
-    "https://picsum.photos/200/200?random=2",
-    "https://picsum.photos/200/200?random=3",
-    "https://picsum.photos/200/200?random=4",
-    "https://picsum.photos/200/200?random=5"
-  ];
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 20px;
+}
 
-  const container = document.getElementById("image-container");
-  const message = document.getElementById("message");
+#image-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 600px;
+  margin: 20px auto;
+}
 
-  // pick 4 random + 1 duplicate
-  let selected = [];
-  while (selected.length < 4) {
-    let img = images[Math.floor(Math.random() * images.length)];
-    if (!selected.includes(img)) {
-      selected.push(img);
-    }
-  }
+#image-container img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 3px solid transparent;
+  border-radius: 6px;
+  transition: 0.3s;
+}
 
-  // add duplicate
-  const duplicate = selected[Math.floor(Math.random() * selected.length)];
-  selected.push(duplicate);
+#image-container img:hover {
+  transform: scale(1.05);
+}
 
-  // shuffle
-  selected.sort(() => Math.random() - 0.5);
+#image-container img.selected {
+  border: 3px solid blue;
+}
 
-  // render images
-  selected.forEach(src => {
-    const img = document.createElement("img");
-    img.src = src;
-    img.style.width = "100px";
-    img.style.margin = "5px";
-    img.addEventListener("click", () => {
-      img.classList.toggle("selected");
-    });
-    container.appendChild(img);
-  });
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  background: #007bff;
+  color: white;
+}
 
-  // verify button
-  document.getElementById("verify-btn").addEventListener("click", () => {
-    const selectedImgs = document.querySelectorAll(".selected");
-    if (selectedImgs.length === 2 && selectedImgs[0].src === selectedImgs[1].src) {
-      message.textContent = "You are a human!";
-      message.style.color = "green";
-    } else {
-      message.textContent = "Verification failed. Try again!";
-      message.style.color = "red";
-    }
-  });
-});
+button:hover {
+  background: #0056b3;
+}
+
+#reset, #verify {
+  display: none;
+}
+
+#message {
+  font-weight: bold;
+  margin-top: 20px;
+}

@@ -1,63 +1,69 @@
-//your code here
 document.addEventListener("DOMContentLoaded", () => {
-  const images = [
+  const imageContainer = document.getElementById("image-container");
+  const resetBtn = document.getElementById("reset");
+  const verifyBtn = document.getElementById("verify");
+  const message = document.getElementById("message");
+
+  const baseImages = [
     "https://picsum.photos/id/237/200/200", // dog
-    "https://picsum.photos/seed/picsum/200/200", // random
-    "https://picsum.photos/200/200?grayscale",
-    "https://picsum.photos/200/200?blur",
-    "https://picsum.photos/200/300"
+    "https://picsum.photos/id/1025/200/200",
+    "https://picsum.photos/id/1003/200/200",
+    "https://picsum.photos/id/1005/200/200",
+    "https://picsum.photos/id/1011/200/200",
+    "https://picsum.photos/id/1015/200/200"
   ];
 
-  // pick 4 random + 1 duplicate
-  let shuffled = [...images];
-  let duplicate = images[Math.floor(Math.random() * images.length)];
-  shuffled.push(duplicate);
+  // pick 5 unique + 1 duplicate
+  function getShuffledImages() {
+    let chosen = baseImages.sort(() => 0.5 - Math.random()).slice(0, 5);
+    let duplicate = chosen[Math.floor(Math.random() * chosen.length)];
+    let finalImages = [...chosen, duplicate];
+    return finalImages.sort(() => 0.5 - Math.random());
+  }
 
-  // shuffle array
-  shuffled = shuffled.sort(() => Math.random() - 0.5);
-
-  const container = document.getElementById("image-container");
-  const verifyBtn = document.getElementById("verify-btn");
-  const message = document.getElementById("message");
+  let images = getShuffledImages();
   let selected = [];
 
-  // render images
-  shuffled.forEach((src, index) => {
-    let img = document.createElement("img");
-    img.src = src;
-    img.classList.add("img");
-    img.dataset.index = index;
-
-    img.addEventListener("click", () => {
-      if (selected.includes(index)) {
-        img.classList.remove("selected");
-        selected = selected.filter(i => i !== index);
-      } else {
-        if (selected.length < 2) {
-          img.classList.add("selected");
-          selected.push(index);
-        }
-      }
+  function renderImages() {
+    imageContainer.innerHTML = "";
+    images.forEach((src, index) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.dataset.index = index;
+      img.addEventListener("click", () => handleImageClick(img, src));
+      imageContainer.appendChild(img);
     });
+  }
 
-    container.appendChild(img);
+  function handleImageClick(img, src) {
+    if (selected.length < 2 && !selected.includes(img)) {
+      img.classList.add("selected");
+      selected.push(img);
+    }
+    if (selected.length === 1) {
+      resetBtn.style.display = "inline-block";
+    }
+    if (selected.length === 2) {
+      verifyBtn.style.display = "inline-block";
+    }
+  }
+
+  resetBtn.addEventListener("click", () => {
+    selected.forEach(img => img.classList.remove("selected"));
+    selected = [];
+    resetBtn.style.display = "none";
+    verifyBtn.style.display = "none";
+    message.textContent = "";
   });
 
-  // verify logic
   verifyBtn.addEventListener("click", () => {
-    if (selected.length !== 2) {
-      message.textContent = "⚠️ Please select exactly two images!";
-      message.style.color = "orange";
-      return;
-    }
-
-    const [i1, i2] = selected;
-    if (shuffled[i1] === shuffled[i2]) {
-      message.textContent = "✅ Verification successful, you’re human!";
-      message.style.color = "green";
+    if (selected[0].src === selected[1].src) {
+      message.textContent = "You are a human. Congratulations!";
     } else {
-      message.textContent = "❌ Wrong choice, try again!";
-      message.style.color = "red";
+      message.textContent = "We can't verify you as a human. You selected the non-identical tiles.";
     }
+    verifyBtn.style.display = "none";
   });
+
+  renderImages();
 });
