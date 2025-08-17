@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const message = document.getElementById("message");
 
   const baseImages = [
-    "https://picsum.photos/id/237/200/200", // dog
+    "https://picsum.photos/id/237/200/200", 
     "https://picsum.photos/id/1025/200/200",
     "https://picsum.photos/id/1003/200/200",
     "https://picsum.photos/id/1005/200/200",
@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "https://picsum.photos/id/1015/200/200"
   ];
 
-  // pick 5 unique + 1 duplicate
   function getShuffledImages() {
     let chosen = baseImages.sort(() => 0.5 - Math.random()).slice(0, 5);
     let duplicate = chosen[Math.floor(Math.random() * chosen.length)];
@@ -29,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     images.forEach((src, index) => {
       const img = document.createElement("img");
       img.src = src;
-      img.dataset.index = index;
+      img.classList.add(`img${index+1}`);  // 👈 yahan class add kar di
       img.addEventListener("click", () => handleImageClick(img, src));
       imageContainer.appendChild(img);
     });
